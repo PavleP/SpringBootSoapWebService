@@ -30,6 +30,7 @@
 
   <properties>
     <java.version>1.8</java.version>
+    <genSource.dir>src/gen/java</genSource.dir>
   </properties>
 
   <build>
@@ -40,21 +41,39 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jaxb2-maven-plugin</artifactId>
-        <version>1.6</version>
+        <artifactId>jaxws-maven-plugin</artifactId>
+        <configuration>
+          <destDir/> <!-- don't need .class files -->
+          <extension>true</extension>
+          <keep>true</keep>
+          <sourceDestDir>${project.basedir}/${genSource.dir}</sourceDestDir>
+          <bindingFiles>
+            <bindingFile>
+              ${project.basedir}/src/main/resources/bindings.xml
+            </bindingFile>
+          </bindingFiles>
+          <sei/>
+          <target>2.1</target>
+          <verbose>true</verbose>
+          <xdebug>true</xdebug>
+        </configuration>
         <executions>
           <execution>
-            <id>xjc</id>
+            <id>wsimport-wealth-projection</id>
+            <phase>process-sources</phase>
             <goals>
-              <goal>xjc</goal>
+              <goal>wsimport</goal>
             </goals>
+            <configuration>
+              <wsdlDirectory>src/wsdl</wsdlDirectory>
+              <packageName>io.spring.guides.gs_producing_web_service</packageName>
+              <staleFile>${project.build.directory}/jaxws/stale/WealthProjectionProviderV1.staleFlag</staleFile>
+              <wsdlFiles>
+                <wsdlFile>countries.wsdl</wsdlFile>
+              </wsdlFiles>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <schemaDirectory>${project.basedir}/src/main/resources/</schemaDirectory>
-          <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-          <clearOutputDir>false</clearOutputDir>
-        </configuration>
       </plugin>
     </plugins>
 
